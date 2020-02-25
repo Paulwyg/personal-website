@@ -5,7 +5,7 @@
             <div>
                 <span class="label">&ensp; &ensp; {{$route.query.label}}</span>
                 <span class="view">&ensp; &ensp; {{$route.query.viewers}}</span>
-                <span class="date">&ensp; &ensp; {{$route.query.date}}</span>
+                <span class="date">&ensp; &ensp; {{utils.timestampToTime($route.query.date)}}</span>
             </div>
         </div>
         <div id="markdown"></div>
@@ -13,23 +13,24 @@
             <div class="title1">发表评论</div>
             <!--<textarea style="height: 100px;width: 980px;">测试</textarea>-->
             <vue-ueditor-wrap v-model="msg" :config="config"></vue-ueditor-wrap>
-            <button class="btn">提交评论</button>
+            <button class="btn" @click="submit">提交评论</button>
+            <button class="btn1" @click="cancel" v-show="isVisi">取消回复</button>
             <div class="new">最新评论</div>
             <div class="content-parent">
                 <div v-for="item in commonts" :key="item.id" style="border-bottom: 1px dashed #e0e0e0;">
                     <img :src="item.icon">
                     <div class="username">{{item.name}}</div>
-                    <div class="content">{{item.content}}</div>
+                    <div class="content" v-html="item.content"></div>
                     <div class="time">
-                        <span>{{item.date}}</span>
-                        <a>回复</a>
+                        <span>{{utils.timestampToTime(item.date)}}</span>
+                        <a @click="reply(item)">回复</a>
                     </div>
                     <div class="reply" v-for="reply in item.children" :key="reply.id">
                         <img :src="reply.icon">
                         <div class="username">{{reply.name}}</div>
-                        <div class="content">{{reply.content}}</div>
+                        <div class="content" v-html="reply.content"></div>
                         <div class="time">
-                            <span>{{reply.date}}</span>
+                            <span>{{utils.timestampToTime(reply.date)}}</span>
                         </div>
                     </div>
                 </div>
@@ -42,34 +43,42 @@
     import marked from 'marked'
     import hljs from 'highlight.js'
     import VueUeditorWrap from 'vue-ueditor-wrap'
+
     export default {
         name: "Essay",
-        components:{
+        components: {
             VueUeditorWrap
         },
-        data(){
-          return{
-              msg:'<h2><img src="http://img.baidu.com/hi/jx2/j_0003.gif"/>Vue + UEditor + v-model双向绑定</h2>',
-              config: {
-                  UEDITOR_HOME_URL: '/UEditor/'  // 需要令此处的URL等于对应 ueditor.config.js 中的配置。
-              },
-              commonts:[{
-                  id:1,
-                  name:'Paulwyg',
-                  icon:'https://avatars2.githubusercontent.com/u/14348558?v=4',
-                  date:'2019-09-25 10:22:57',
-                  content:'测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论',
-                  children:[{
-                      id:1,
-                      name:'Paulwyg',
-                      icon:'https://avatars2.githubusercontent.com/u/14348558?v=4',
-                      content:'回复评论',
-                      date:'2019-09-26 10:22:57',
-                  }]
-              }]
-          }
+        data() {
+            return {
+                id:0,
+                name: '',
+                isVisi: false,
+                msg: `<p><span style="color:#ccc;">想对作者说点儿什么</span></p>`,
+                // msg: '<h2><img src="http://img.baidu.com/hi/jx2/j_0003.gif"/>Vue + UEditor + v-model双向绑定</h2>',
+                config: {
+                    UEDITOR_HOME_URL: '/UEditor/'  // 需要令此处的URL等于对应 ueditor.config.js 中的配置。
+                },
+                commonts: [],
+                // commonts: [{
+                //     id: 1,
+                //     name: 'Paulwyg',
+                //     icon: 'https://avatars2.githubusercontent.com/u/14348558?v=4',
+                //     date: '2019-09-25 10:22:57',
+                //     content: '测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论测试评论',
+                //     children: [{
+                //         id: 1,
+                //         name: 'Paulwyg',
+                //         icon: 'https://avatars2.githubusercontent.com/u/14348558?v=4',
+                //         content: '回复评论',
+                //         date: '2019-09-26 10:22:57',
+                //     }]
+                // }]
+            }
         },
         mounted() {
+            console.log(this.$route.fullPath)
+            let self = this
             marked.setOptions({
                 renderer: new marked.Renderer(),
                 gfm: true,
@@ -79,11 +88,18 @@
                 sanitize: false,
                 smartLists: true,
                 smartypants: false,
-                highlight:function (code) {
+                highlight: function (code) {
                     return hljs.highlightAuto(code).value
                 }
             });
-            this.$axios.get('/test/articles').then((res)=>{
+            //获取md文件
+            this.$axios({
+                method: 'post',
+                url: '/test/articles',
+                data: {
+                    id: self.$route.query.id
+                }
+            }).then((res) => {
                 console.log(res)
                 document.getElementById('markdown').innerHTML = marked(res.data)
                 //渲染文档中代码部分
@@ -91,9 +107,85 @@
                 this.$("code").addClass('hljs')
             })
 
-            console.log(process.env.BASE_URL)
+            //console.log(process.env.BASE_URL)
+            //获取评论信息
+            this.$axios({
+                method: 'get',
+                url: '/test/commonts',
+                params: {
+                    id: self.$route.query.id
+                }
+            }).then((res) => {
+                console.log(res)
+                this.commonts = res.data.filter(item => {
+                    return item.parent === null
+                })
+                this.commonts.forEach(item => {
+                    item.children = new Array()
+                    res.data.forEach(f => {
+                        if (item.id == f.parent) {
+                            item.children.push(f)
+                        }
+                    })
+                })
+            })
+
+        },
+        watch: {
+            msg(newVal, oldVal) {
+                if (oldVal.indexOf('#ccc') !== -1) {
+                    if (newVal === `<p><span style="color:#ccc;">@${this.name}</span></p>`
+                        || newVal === `<p><span style="color:#ccc;">想对作者说点儿什么</span></p>`) return
+                    this.msg = newVal.replace('想对作者说点儿什么', '').replace('@'+this.name, '').replace('#ccc', 'black')
+                }
+                if (newVal === '') {
+                    let content = this.isVisi ? `@${this.name}` : '想对作者说点儿什么'
+                    this.msg = `<p><span style="color:#ccc">${content}</span></p>`
+                }
+            }
         },
         methods: {
+            //提交评论
+            submit() {
+                if (this.msg == '') {
+                    this.$message.error('请输入评论内容')
+                    return
+                }
+                let data = {
+                    article_id: parseInt(this.$route.query.id),
+                    date: Math.floor((new Date()).getTime() / 1000),
+                    content: this.msg.substr(3,this.msg.length-7),
+                    parent: this.id === 0 ? null : this.id
+                }
+                //保存评论信息
+                this.$axios({
+                    method: 'post',
+                    url: '/test/commonts',
+                    data
+                }).then(res => {
+                    console.log(res)
+                    if (res.status == 200) {
+                        this.$message.success('评论成功')
+                    }
+
+                }).catch(e=>{
+                    this.$message.error(e)
+                })
+            },
+            //回复
+            reply(item) {
+                this.name = item.name
+                this.id=item.id
+                this.isVisi = true
+                this.msg = `<p><span style="color:#ccc;">@${item.name}</span></p>`
+            },
+            //取消回复
+            cancel() {
+                this.isVisi = false
+                this.name=''
+                this.id=0
+                this.msg = `<p><span style="color:#ccc;">想对作者说点儿什么</span></p>`
+            }
         }
     }
 </script>
@@ -112,30 +204,36 @@
         min-height: 909px;
         box-shadow: 0 0 10px 2px #666;
         background-color: white;
-        #markdown{
+        #markdown {
             min-height: 909px;
         }
-        .title{
+        .title {
             text-align: center;
             .label {
                 background: url("../assets/label.png") no-repeat left center;
                 width: 100px;
                 margin-right: 20px;
-            };
+            }
+        ;
             .view {
                 background: url("../assets/viewer.png") no-repeat left center;
                 width: 100px;
                 margin-right: 20px;
-            };
+            }
+        ;
             .date {
                 background: url("../assets/date.png") no-repeat left center;
                 width: 100px;
             }
-        };
-        .comments{
+        }
+    ;
+        .comments {
             position: relative;
             margin-top: 20px;
             margin-bottom: 20px;
+            #edui1 {
+                z-index: 1 !important;
+            }
             .title1 {
                 font-size: 18px;
                 line-height: 40px;
@@ -147,7 +245,8 @@
                 text-align: left;
                 /*margin-left: 20px;*/
                 margin-right: 20px;
-            };
+            }
+        ;
             .title1:after {
                 content: "";
                 position: absolute;
@@ -159,21 +258,34 @@
                 -moz-transition: all .5s ease;
                 -webkit-transition: all .5s ease;
                 transition: all .5s ease;
-            };
+            }
+        ;
             .title1:hover:after {
                 width: 80px;
-            };
-            .btn{
+            }
+        ;
+            .btn {
                 width: 75px;
                 height: 30px;
                 border: none;
                 border-radius: 5px;
                 background-color: #009688;
-                color:white;
+                color: white;
                 cursor: pointer;
                 margin-top: 10px;
-            };
-            .new{
+            }
+            .btn1 {
+                width: 75px;
+                height: 30px;
+                border-radius: 5px;
+                background-color: white;
+                color: black;
+                cursor: pointer;
+                margin-top: 10px;
+                border: #ccc 1px solid;
+            }
+        ;
+            .new {
                 border-bottom: 1px solid #009688;
                 font-size: 15px;
                 font-weight: 500;
@@ -182,38 +294,42 @@
                 margin-bottom: 5px;
                 margin-right: 20px;
                 color: #01aaed;
-            };
-            .content-parent{
+            }
+        ;
+            .content-parent {
                 margin-right: 20px;
-                img{
+                img {
                     width: 45px;
                     height: 45px;
                     margin: 5px 5px 5px 0;
                     position: absolute;
                     border-radius: 50px;
-                };
-                .username{
+                }
+            ;
+                .username {
                     color: #01aaed;
                     font-size: 14px;
                     margin-left: 53px;
                     padding-top: 5px;
-                };
-                .content{
+                }
+            ;
+                .content {
                     margin-left: 53px;
                     padding-top: 5px;
                     padding-bottom: 10px;
                     line-height: 25px;
-                };
-                .time{
+                }
+            ;
+                .time {
                     margin-left: 53px;
                     padding-bottom: 5px;
-                    a{
+                    a {
                         color: #009688;
                         margin-left: 10px;
                         cursor: pointer;
                     }
                 }
-                .reply{
+                .reply {
                     margin-left: 53px;
                     padding-left: 8px;
                     border-left: 4px solid #c5c5c5

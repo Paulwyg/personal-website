@@ -5,7 +5,7 @@
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" active-text-color="#ffd04b" @select="handleSelect">
             <el-menu-item class="el-menu-item" index="1"><router-link to="/main">网站首页</router-link></el-menu-item>
             <el-menu-item index="2"><router-link to="/articles">文章专栏</router-link></el-menu-item>
-            <el-menu-item index="3"><a href="" target="_blank">关于本站</a></el-menu-item>
+            <el-menu-item index="3"><router-link to="/about">关于本站</router-link></el-menu-item>
         </el-menu>
         <span class="login" @click="login">登 录</span>
     </div>
@@ -24,7 +24,13 @@
                 console.log(index)
             },
             login(){
-                this.$axios.get('/test/github/login').then((res)=>{
+                this.$axios({
+                    method: 'get',
+                    url: '/test/github/login',
+                    params: {
+                        path: 'http://localhost:8080'+this.$route.fullPath
+                    }
+                }).then((res)=>{
                     console.log(res)
                     window.location.href=res.data;
                 })
@@ -37,7 +43,7 @@
     .head{
         position: fixed;
         top: 0;
-        z-index: 100;
+        z-index: 1001;
         display: flex;
         justify-content: center;
         align-items: center;
