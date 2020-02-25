@@ -153,7 +153,7 @@
         display: flex;
         flex-direction: column;
         background-color: #eee;
-        min-height: 909px;
+        min-height: 809px;
 
         .middle {
             flex: 1;

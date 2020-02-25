@@ -207,7 +207,7 @@
         display: flex;
         flex-direction: column;
         background-color: #eee;
-        min-height: 909px;
+        min-height: 809px;
         .slider {
             width: 800px;
             margin: 10px auto;

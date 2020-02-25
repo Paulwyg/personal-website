@@ -50,11 +50,11 @@
 
         width: 100%;
         height: 60px;
-        background-color: black;
+        background-color: #393d49;
         color:white;
         .el-menu-demo {
             padding-left: 55px;
-            background-color: black;
+            background-color: #393d49;
             .el-menu-item{
                 color:white;
                 font-size: 16px;
