@@ -22,10 +22,16 @@
                 <p style="margin:0 20px 10px 20px;line-height: 25px">&emsp;&emsp;现在已完成基本功能开发，后续继续完善功能和页面。本博客为实验之作，还有诸多不足之处，欢迎提出宝贵意见。</p>
             </fieldset>
         </div>
-        <div v-if="focusKey == 2" class="me">
-
+        <div v-if="focusKey == 2" class="me" style="text-align: center;">
+             <div style="margin-top: 20px">
+                <img src="../assets/me.jpg" class="myPicture">
+             </div>
+             <div>
+               <span style="font-size: 30px">亦尘</span>
+             </div>
         </div>
         <div v-if="focusKey == 3" class="message">
+
 
         </div>
         <!--<h1>This is an about page</h1>-->
@@ -86,7 +92,17 @@
             margin-left: -55px;
             top: 125px;
             color: white;
-            font-family: brush script mt,cursive;
+            font-family:"Curvic";
+
+        }
+        @font-face {
+            font-family:"Curvic";
+            src:url("../../public/font/CURVIC__.eot?") format("eot"),
+            url("../../public/font/CURVIC__.woff") format("woff"),
+            url("../../public/font/CURVIC__.ttf") format("truetype"),
+            url("../../public/font/CURVIC__.svg#Curvic") format("svg");
+            font-weight:normal;
+            font-style:normal;
         }
         .name{
             text-align: center;
@@ -111,10 +127,12 @@
             height: 50px;
             width: 50px;
             margin-right: 20px;
+            cursor: pointer;
         }
         .csdn{
             height: 100px;
             width: 100px;
+            cursor: pointer;
         }
         fieldset{
             margin: 10px 0 20px;
@@ -126,6 +144,13 @@
             padding: 0 10px;
             font-size: 20px;
             font-weight: 300;
+        }
+        .myPicture{
+            width: 160px;
+            height: 160px;
+            border-radius: 80px;
+            border:1px solid #ccc;
+            box-shadow:3px 3px 4px #ccc;
         }
     }
 </style>
