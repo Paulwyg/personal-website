@@ -1,5 +1,10 @@
 <template>
     <div class="articles">
+        <div class="navigation shadow">
+            <span style="width: 10px;background-color: #409EFF;display: inline-block">&emsp;</span>
+            <router-link to="/main" style="margin-left: 10px">首页</router-link>
+            <span> > 文章专栏</span>
+        </div>
         <div class="middle">
             <div style=" width: 750px;margin-right: 2%;margin-left: 2%;">
                 <div class="article shadow" v-for="article in selectedArticles" :key="article.id">
@@ -154,7 +159,14 @@
         flex-direction: column;
         background-color: #eee;
         min-height: 809px;
+        .navigation{
+            background-color: white;
+            margin: 15px 20px 0 20px;
+            text-align: left;
+            height: 35px;
+            line-height: 35px;
 
+        }
         .middle {
             flex: 1;
             display: flex;
