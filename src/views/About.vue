@@ -55,12 +55,12 @@
              <div class="comments">
             <div class="title1">发表评论</div>
             <!--<textarea style="height: 100px;width: 980px;">测试</textarea>-->
-            <vue-ueditor-wrap v-model="msg" :config="config"></vue-ueditor-wrap>
+            <vue-ueditor-wrap id="edit" v-model="msg" :config="config"></vue-ueditor-wrap>
             <button class="btn" @click="submit">提交评论</button>
             <button class="btn1" @click="cancel" v-show="isVisi">取消回复</button>
             <div class="new">最新评论</div>
             <div class="content-parent">
-                <div v-for="item in commonts" :key="item.id" style="border-bottom: 1px dashed #e0e0e0;">
+                <div v-for="item in messages" :key="item.id" style="border-bottom: 1px dashed #e0e0e0;">
                     <img :src="item.icon">
                     <div class="username">{{item.name}}</div>
                     <div class="content" v-html="item.content"></div>
@@ -100,7 +100,7 @@
                 config: {
                     UEDITOR_HOME_URL: '/UEditor/'  // 需要令此处的URL等于对应 ueditor.config.js 中的配置。
                 },
-                commonts:[]
+                messages:[]
             }
         },
         methods: {
@@ -109,7 +109,33 @@
                 this.focusKey=key
             },
             submit(){
-
+                if (this.msg == '') {
+                    this.$message.error('请输入评论内容')
+                    return
+                }
+                let data = {
+                    date: Math.floor((new Date()).getTime() / 1000),
+                    content: this.msg.substr(3,this.msg.length-7),
+                    parent: this.id === 0 ? null : this.id
+                }
+                //保存评论信息
+                this.$axios({
+                    method: 'post',
+                    url: '/test/message',
+                    data
+                }).then(res => {
+                    console.log(res)
+                    if (res.status == 200) {
+                        this.$message.success('留言成功')
+                    }
+                }).catch(e=>{
+                    this.$message.error(e)
+                })
+            },
+            reply(){
+                //文本框置顶
+                var scroll_offset = this.$('#edit').offset();
+                this.$('html,body').animate({scrollTop: scroll_offset.top-60}, 800)
             },
             cancel(){
 
@@ -120,6 +146,24 @@
             // this.$store.dispatch('incrementAsync', {
             //   amount: 10
             // })
+            //获取评论信息
+            this.$axios({
+                method: 'get',
+                url: '/test/message'
+            }).then((res) => {
+                console.log(res)
+                this.messages = res.data.filter(item => {
+                    return item.parent === null
+                })
+                this.messages.forEach(item => {
+                    item.children = new Array()
+                    res.data.forEach(f => {
+                        if (item.id == f.parent) {
+                            item.children.push(f)
+                        }
+                    })
+                })
+            })
         }
     }
 </script>

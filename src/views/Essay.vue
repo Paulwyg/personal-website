@@ -12,13 +12,13 @@
         <div class="comments">
             <div class="title1">发表评论</div>
             <!--<textarea style="height: 100px;width: 980px;">测试</textarea>-->
-            <vue-ueditor-wrap v-model="msg" :config="config"></vue-ueditor-wrap>
+            <vue-ueditor-wrap id="edit" v-model="msg" :config="config"></vue-ueditor-wrap>
             <button class="btn" @click="submit">提交评论</button>
             <button class="btn1" @click="cancel" v-show="isVisi">取消回复</button>
             <div class="new">最新评论</div>
             <div class="content-parent">
                 <div v-for="item in commonts" :key="item.id" style="border-bottom: 1px dashed #e0e0e0;">
-                    <img :src="item.icon">
+                    <img class="icon" :src="item.icon">
                     <div class="username">{{item.name}}</div>
                     <div class="content" v-html="item.content"></div>
                     <div class="time">
@@ -26,7 +26,7 @@
                         <a @click="reply(item)">回复</a>
                     </div>
                     <div class="reply" v-for="reply in item.children" :key="reply.id">
-                        <img :src="reply.icon">
+                        <img class="icon" :src="reply.icon">
                         <div class="username">{{reply.name}}</div>
                         <div class="content" v-html="reply.content"></div>
                         <div class="time">
@@ -119,6 +119,8 @@
                 console.log(res)
                 this.commonts = res.data.filter(item => {
                     return item.parent === null
+                }).sort((x,y)=>{
+                    return y.date-x.date
                 })
                 this.commonts.forEach(item => {
                     item.children = new Array()
@@ -174,6 +176,9 @@
             },
             //回复
             reply(item) {
+                //文本框置顶
+                var scroll_offset = this.$('#edit').offset();
+                this.$('html,body').animate({scrollTop: scroll_offset.top-60}, 800)
                 this.name = item.name
                 this.id=item.id
                 this.isVisi = true
@@ -298,7 +303,7 @@
         ;
             .content-parent {
                 margin-right: 20px;
-                img {
+                .icon {
                     width: 45px;
                     height: 45px;
                     margin: 5px 5px 5px 0;
