@@ -26,31 +26,93 @@
              <div style="margin-top: 20px">
                 <img src="../assets/me.jpg" class="myPicture">
              </div>
-             <div>
-               <span style="font-size: 30px">亦尘</span>
+             <div style="margin-top: 10px">
+               <span style="font-size: 30px;">亦尘</span>
              </div>
+             <p style="font-size: 20px">90后码农，前端攻城狮，目标全栈工程师</p>
+            <fieldset>
+                <legend>简介</legend>
+                <h2 style="text-align: left;margin-left: 20px">我是谁</h2>
+                <p style="margin:10px 20px 0 20px;line-height: 25px;text-align: left;">&emsp;&emsp;马上进入而立之年的不服输的年轻人，在前端的道路上狂奔。喜欢唱歌，篮球，乒乓球...
+                要做的事情很多，但时间却很少。加油，加油，加油！！！</p>
+                <h2 style="text-align: left;margin-left: 20px">我在做什么</h2>
+                <p style="margin:10px 20px 0 20px;line-height: 25px;text-align: left;">&emsp;&emsp;现就职于一家从事智慧照明行业的国企，负责监控软件的前端开发，
+                技术栈为VUE(3.0出来了，学习永无止境...)，熟练使用git，webpack，也会自己玩儿node，小程序，移动端接触的比较少，未来要努力。</p>
+                <h2 style="text-align: left;margin-left: 20px">我要做什么</h2>
+                <p style="margin:10px 20px 0 20px;line-height: 25px;text-align: left;">&emsp;&emsp;现在才知一入前端深似海，要学的很多，框架一直在变，不变的是底层原理，未来要深耕源码，
+                同时了解技术的最新动态，注重深度的同时也要兼顾广度，我要成为牛叉的全栈攻城狮。</p>
+            </fieldset>
         </div>
         <div v-if="focusKey == 3" class="message">
-
-
+             <div style="margin-top: 20px;text-align: center">
+                <img src="../assets/message.jpg" class="myPicture">
+             </div>
+             <div style="margin-top: 10px;text-align: center">
+               <span style="font-size: 30px;">留言板</span>
+             </div>
+             <p style="font-size: 20px;text-align: center">欢迎各位留言，提出宝贵意见</p>
+             <hr>
+             <div class="comments">
+            <div class="title1">发表评论</div>
+            <!--<textarea style="height: 100px;width: 980px;">测试</textarea>-->
+            <vue-ueditor-wrap v-model="msg" :config="config"></vue-ueditor-wrap>
+            <button class="btn" @click="submit">提交评论</button>
+            <button class="btn1" @click="cancel" v-show="isVisi">取消回复</button>
+            <div class="new">最新评论</div>
+            <div class="content-parent">
+                <div v-for="item in commonts" :key="item.id" style="border-bottom: 1px dashed #e0e0e0;">
+                    <img :src="item.icon">
+                    <div class="username">{{item.name}}</div>
+                    <div class="content" v-html="item.content"></div>
+                    <div class="time">
+                        <span>{{utils.timestampToTime(item.date)}}</span>
+                        <a @click="reply(item)">回复</a>
+                    </div>
+                    <div class="reply" v-for="reply in item.children" :key="reply.id">
+                        <img :src="reply.icon">
+                        <div class="username">{{reply.name}}</div>
+                        <div class="content" v-html="reply.content"></div>
+                        <div class="time">
+                            <span>{{utils.timestampToTime(reply.date)}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
         <!--<h1>This is an about page</h1>-->
         <!--<h2>num:{{$store.state.count}}</h2>-->
     </div>
 </template>
 <script>
+    import VueUeditorWrap from 'vue-ueditor-wrap'
     export default {
         name: 'about',
+        components: {
+            VueUeditorWrap
+        },
         data() {
             return {
                 activeIndex: '1',
-                focusKey:'1'
+                focusKey:'1',
+                msg:'',
+                isVisi:false,
+                config: {
+                    UEDITOR_HOME_URL: '/UEditor/'  // 需要令此处的URL等于对应 ueditor.config.js 中的配置。
+                },
+                commonts:[]
             }
         },
         methods: {
             handleSelect(key, keyPath) {
                 console.log(key, keyPath);
                 this.focusKey=key
+            },
+            submit(){
+
+            },
+            cancel(){
+
             }
         },
         created() {
@@ -62,6 +124,7 @@
     }
 </script>
 <style lang="scss">
+    @import "../common/font/stylesheet.css";
     .about {
         position: relative;
         width: 1000px;
@@ -72,11 +135,14 @@
         left: 0;
         right: 0;
         text-align: left;
-        min-height: 809px;
+        min-height: 789px;
         box-shadow: 0 0 10px 2px #666;
         background-color: white;
         .el-menu-demo{
             padding-left:350px;
+        }
+        .el-menu-item{
+            font-size: 16px;
         }
         .circle {
             width: 160px;
@@ -87,22 +153,13 @@
         }
         .word{
             position: absolute;
-            font-size: 60px;
+            font-size: 30px;
             left: 50%;
-            margin-left: -55px;
-            top: 125px;
+            margin-left: -73px;
+            top: 148px;
             color: white;
-            font-family:"Curvic";
+            font-family: "Curvic";
 
-        }
-        @font-face {
-            font-family:"Curvic";
-            src:url("../../public/font/CURVIC__.eot?") format("eot"),
-            url("../../public/font/CURVIC__.woff") format("woff"),
-            url("../../public/font/CURVIC__.ttf") format("truetype"),
-            url("../../public/font/CURVIC__.svg#Curvic") format("svg");
-            font-weight:normal;
-            font-style:normal;
         }
         .name{
             text-align: center;
@@ -151,6 +208,115 @@
             border-radius: 80px;
             border:1px solid #ccc;
             box-shadow:3px 3px 4px #ccc;
+        }
+        .comments {
+            position: relative;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            #edui1 {
+                z-index: 1 !important;
+            }
+            .title1 {
+                font-size: 18px;
+                line-height: 40px;
+                border-bottom: 1px solid #eee;
+                color: #484848;
+                font-weight: normal;
+                position: relative;
+                margin-bottom: 10px;
+                text-align: left;
+                /*margin-left: 20px;*/
+                margin-right: 20px;
+            }
+        ;
+            .title1:after {
+                content: "";
+                position: absolute;
+                width: 60px;
+                height: 2px;
+                background: #000;
+                left: 0;
+                bottom: 0;
+                -moz-transition: all .5s ease;
+                -webkit-transition: all .5s ease;
+                transition: all .5s ease;
+            }
+        ;
+            .title1:hover:after {
+                width: 80px;
+            }
+        ;
+            .btn {
+                width: 75px;
+                height: 30px;
+                border: none;
+                border-radius: 5px;
+                background-color: #009688;
+                color: white;
+                cursor: pointer;
+                margin-top: 10px;
+            }
+            .btn1 {
+                width: 75px;
+                height: 30px;
+                border-radius: 5px;
+                background-color: white;
+                color: black;
+                cursor: pointer;
+                margin-top: 10px;
+                border: #ccc 1px solid;
+            }
+        ;
+            .new {
+                border-bottom: 1px solid #009688;
+                font-size: 15px;
+                font-weight: 500;
+                padding: 0 0 5px;
+                margin-top: 20px;
+                margin-bottom: 5px;
+                margin-right: 20px;
+                color: #01aaed;
+            }
+        ;
+            .content-parent {
+                margin-right: 20px;
+                img {
+                    width: 45px;
+                    height: 45px;
+                    margin: 5px 5px 5px 0;
+                    position: absolute;
+                    border-radius: 50px;
+                }
+            ;
+                .username {
+                    color: #01aaed;
+                    font-size: 14px;
+                    margin-left: 53px;
+                    padding-top: 5px;
+                }
+            ;
+                .content {
+                    margin-left: 53px;
+                    padding-top: 5px;
+                    padding-bottom: 10px;
+                    line-height: 25px;
+                }
+            ;
+                .time {
+                    margin-left: 53px;
+                    padding-bottom: 5px;
+                    a {
+                        color: #009688;
+                        margin-left: 10px;
+                        cursor: pointer;
+                    }
+                }
+                .reply {
+                    margin-left: 53px;
+                    padding-left: 8px;
+                    border-left: 4px solid #c5c5c5
+                }
+            }
         }
     }
 </style>
