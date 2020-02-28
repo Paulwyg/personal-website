@@ -1,5 +1,12 @@
 <template>
     <div class="essay">
+        <div class="navigation shadow">
+            <span style="width: 10px;background-color: #409EFF;display: inline-block">&emsp;</span>
+            <router-link to="/main" style="margin-left: 10px">首页</router-link>
+            <span>&nbsp;>&nbsp;</span>
+            <router-link to="/articles">文章专栏</router-link>
+            <span>&nbsp;>&nbsp;{{$route.query.title}}</span>
+        </div>
         <div class="title">
             <h1>{{$route.query.title}}</h1>
             <div>
@@ -77,7 +84,7 @@
             }
         },
         mounted() {
-            console.log(this.$route.fullPath)
+            console.log(this.$route)
             let self = this
             marked.setOptions({
                 renderer: new marked.Renderer(),
@@ -198,9 +205,8 @@
 <style lang="scss">
     .essay {
         position: relative;
-        width: 1000px;
+        /*width: 1000px;*/
         margin: 0 auto;
-        margin-top: 80px;
         margin-bottom: 30px;
         padding: 5px 20px 5px 20px;
         left: 0;
@@ -208,12 +214,23 @@
         text-align: left;
         min-height: 909px;
         box-shadow: 0 0 10px 2px #666;
-        background-color: white;
+        background-color: #eee;
+        .navigation {
+            background-color: white;
+            margin-top: 10px;
+            text-align: left;
+            height: 35px;
+            line-height: 35px;
+
+        }
         #markdown {
             min-height: 909px;
+            background-color: white;
+            padding:10px;
         }
         .title {
             text-align: center;
+            background-color: white;
             .label {
                 background: url("../assets/label.png") no-repeat left center;
                 width: 100px;
@@ -236,6 +253,9 @@
             position: relative;
             margin-top: 20px;
             margin-bottom: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+            background-color: white;
             #edui1 {
                 z-index: 1 !important;
             }
@@ -340,6 +360,13 @@
                     border-left: 4px solid #c5c5c5
                 }
             }
+        }
+        .shadow {
+            box-shadow: 0 2px 10px 0 rgba(0, 0, 0, .1);
+            border-radius: 1px;
+        }
+        .edui-default .edui-editor {
+            width: 100%!important;
         }
     }
 </style>

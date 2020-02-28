@@ -23,7 +23,7 @@
             </div>
             <div class="right">
                 <div style="text-align: left;margin-bottom: 20px;width: 95%">
-                    <el-input v-model="input" placeholder="请输入内容" style="width: 235px;"></el-input>
+                    <el-input v-model="input" placeholder="请输入内容" style="width: calc(100% - 80px)"></el-input>
                     <input type="button" value="搜索" class="btn" @click="search"/>
                 </div>
                 <div class="card shadow">
@@ -148,9 +148,8 @@
 <style lang="scss">
     .articles {
         position: relative;
-        width: 1000px;
+        /*width: 1000px;*/
         margin: 0 auto;
-        margin-top: 80px;
         margin-bottom: 30px;
         left: 0;
         right: 0;
@@ -165,7 +164,6 @@
             text-align: left;
             height: 35px;
             line-height: 35px;
-
         }
         .middle {
             flex: 1;

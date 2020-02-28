@@ -2,7 +2,7 @@
     <div class="head">
         <span style="margin-right: 5px">亦尘的博客</span>
         <span>| 分享前端知识</span>
-        <el-menu :default-active="this.$route.name" class="el-menu-demo" mode="horizontal" active-text-color="#ffd04b" @select="handleSelect">
+        <el-menu :default-active="this.$route.name == 'essay'? 'articles':this.$route.name" class="el-menu-demo" mode="horizontal" active-text-color="#ffd04b" @select="handleSelect">
             <el-menu-item class="el-menu-item" index="main"><router-link to="/main">网站首页</router-link></el-menu-item>
             <el-menu-item index="articles"><router-link to="/articles">文章专栏</router-link></el-menu-item>
             <el-menu-item index="about"><router-link to="/about">关于本站</router-link></el-menu-item>

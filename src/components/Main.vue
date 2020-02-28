@@ -1,6 +1,6 @@
 <template>
     <div class="main">
-        <el-carousel class="slider" height="300px">
+        <el-carousel class="slider">
             <el-carousel-item v-for="item in sliderShow" :key="item.id">
                 <img :src="item.src">
             </el-carousel-item>
@@ -93,19 +93,19 @@
                 // }],
                 sliderShow: [{
                     id: 1,
-                    src: require('../assets/timg.jpg'),
+                    src: require('../assets/timg1.jpg'),
                     txt: '图片1'
                 }, {
                     id: 2,
-                    src: require('../assets/timg.jpg'),
+                    src: require('../assets/timg2.jpg'),
                     txt: '图片2'
                 }, {
                     id: 3,
-                    src: require('../assets/timg.jpg'),
+                    src: require('../assets/timg3.jpg'),
                     txt: '图片3'
                 }, {
                     id: 4,
-                    src: require('../assets/timg.jpg'),
+                    src: require('../assets/timg4.jpg'),
                     txt: '图片4'
                 }],
                 recentArticles:[],
@@ -197,9 +197,8 @@
 <style lang="scss">
     .main {
         position: relative;
-        width: 1000px;
+        /*width: 1000px;*/
         margin: 0 auto;
-        margin-top: 80px;
         margin-bottom: 30px;
         left: 0;
         right: 0;
@@ -209,12 +208,11 @@
         background-color: #eee;
         min-height: 809px;
         .slider {
-            width: 800px;
+            /*width: 1000px;*/
             margin: 10px auto;
 
             img {
-                width: 800px;
-                height: 300px;
+                width: 100%;
             }
         }
 
@@ -345,6 +343,35 @@
         .shadow {
             box-shadow: 0 2px 10px 0 rgba(0, 0, 0, .1);
             border-radius: 1px;
+        }
+    }
+    @media (min-width: 768px) {
+        .slider {
+            height: 221px;
+            width: 689px;
+        }
+        .el-carousel__container{
+            height: 221px;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .slider {
+            height:292px ;
+            width:909px;
+        }
+        .el-carousel__container{
+            height: 292px;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .slider {
+            height: 350px;
+            width: 1090px;
+        }
+        .el-carousel__container{
+            height: 350px;
         }
     }
 </style>

@@ -109,7 +109,20 @@
                 config: {
                     UEDITOR_HOME_URL: '/UEditor/'  // 需要令此处的URL等于对应 ueditor.config.js 中的配置。
                 },
-                messages: []
+                messages: [],
+                id:0,
+                name: '',
+            }
+        },
+        watch: {
+            msg(newVal, oldVal) {
+                if (oldVal.indexOf('#ccc') !== -1) {
+                    this.msg = newVal.replace('@'+this.name, '').replace('#ccc', 'black')
+                }
+                if (newVal === '' && this.isVisi) {
+                    let content = `@${this.name}`
+                    this.msg = `<p><span style="color:#ccc">${content}</span></p>`
+                }
             }
         },
         methods: {
@@ -141,13 +154,20 @@
                     this.$message.error(e)
                 })
             },
-            reply() {
+            reply(item) {
                 //文本框置顶
                 var scroll_offset = this.$('#edit').offset();
                 this.$('html,body').animate({scrollTop: scroll_offset.top - 60}, 800)
+                this.name = item.name
+                this.id=item.id
+                this.isVisi = true
+                this.msg = `<p><span style="color:#ccc;">@${item.name}</span></p>`
             },
             cancel() {
-
+                this.isVisi = false
+                this.name=''
+                this.id=0
+                this.msg = ''
             }
         },
         created() {
@@ -181,9 +201,8 @@
 
     .about {
         position: relative;
-        width: 1000px;
+        /*width: 1000px;*/
         margin: 0 auto;
-        margin-top: 80px;
         margin-bottom: 30px;
         padding: 5px 20px 5px 20px;
         left: 0;
@@ -201,7 +220,7 @@
 
         }
         .el-menu-demo {
-            padding-left: 350px;
+            padding-left: calc(50% - 132px);
         }
         .el-menu-item {
             font-size: 16px;
@@ -273,9 +292,7 @@
         }
         .comments {
             position: relative;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            margin-left: 20px;
+            margin: 20px;
             #edui1 {
                 z-index: 1 !important;
             }
@@ -384,6 +401,9 @@
         .shadow {
             box-shadow: 0 2px 10px 0 rgba(0, 0, 0, .1);
             border-radius: 1px;
+        }
+        .edui-default .edui-editor {
+            width: 100%!important;
         }
     }
 </style>
